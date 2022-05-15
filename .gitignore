@@ -1,0 +1,8 @@
+.venv
+.vscode
+__pycache__
+
+# Exclude parts of repo not meant for git
+/config/*
+/tests/*
+config.yaml

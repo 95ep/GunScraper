@@ -1,0 +1,14 @@
+scraper:
+  filters:
+    caliber: 22lr
+    handedness: left
+  sites:
+    - torsbo
+
+email:
+  sender: no-reply@gfg.com
+  receiver: rebecca.roe@email.com
+  smtp_server: smtp.server.com
+  ssl_port: 465
+  username: evan_elk
+  password: KingOfTheForest
