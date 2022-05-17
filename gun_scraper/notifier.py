@@ -43,4 +43,4 @@ def send_email_notification(guns_list: List[Dict]):
             email_config["receiver"],
             message.as_string(),
         )
-    logger.info(f"Email notification sent to {email_config['receiver']}")
+    logger.info("Email notification sent")
