@@ -4,5 +4,6 @@ __pycache__
 
 # Exclude parts of repo not meant for git
 /config/*
+/logs/*
 /tests/*
 config.yaml

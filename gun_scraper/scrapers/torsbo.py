@@ -1,3 +1,4 @@
+from loguru import logger
 from typing import Dict, List, Union
 
 import requests
@@ -7,8 +8,9 @@ from gun_scraper.scrapers.scraper_abc import GunScraperABC
 
 
 class TorsboGunScraperError(Exception):
-    # Add some logging logic here, loguru??
-    pass
+    def __init__(self, message) -> None:
+        super().__init__(message)
+        logger.error(message)
 
 
 class TorsboGunScraper(GunScraperABC):
@@ -29,6 +31,7 @@ class TorsboGunScraper(GunScraperABC):
             raise TorsboGunScraperError(
                 f"Caliber filter value '{filter_value}' is not supported!"
             )
+        logger.debug(f"Caliber filter set to {self.caliber}")
 
     def _set_handedness_filter(self, filter_value: str):
         if filter_value in self.supported_handedness:
@@ -37,6 +40,7 @@ class TorsboGunScraper(GunScraperABC):
             raise TorsboGunScraperError(
                 f"Handedness filter value '{filter_value}' is not supported!"
             )
+        logger.debug(f"Handedness filter set to {filter_value}")
 
     def _parse_filters(self, filters: Dict[str, str]):
         """_summary_
@@ -47,6 +51,7 @@ class TorsboGunScraper(GunScraperABC):
         Raises:
             TorsboGunScraperError: _description_
         """
+        logger.debug(f"Parsing filters: {filters}")
         for filter_key, filter_value in filters.items():
             if filter_key == "handedness":
                 self._set_handedness_filter(filter_value)
@@ -56,6 +61,7 @@ class TorsboGunScraper(GunScraperABC):
                 raise TorsboGunScraperError(
                     f"Filter type '{filter_key}' not supported!"
                 )
+        logger.debug("Filters parsed")
 
     def _build_url(self) -> None:
         """_summary_"""
@@ -71,6 +77,8 @@ class TorsboGunScraper(GunScraperABC):
             for url_filter in url_filters:
                 self.query_url += url_filter + "&"
 
+        logger.debug(f"URL successfully built: {self.query_url}")
+
     def scrape(
         self,
     ) -> List[Dict[str, Union[str, int]]]:
@@ -81,14 +89,18 @@ class TorsboGunScraper(GunScraperABC):
         """
         result_page = requests.get(self.query_url)
         soup = BeautifulSoup(result_page.content, "html.parser")
+        logger.debug("Result page successfully retrieved")
 
         # If no gun match filter criteria, the <ol> below will be missing from page
         products_list = soup.find("ol", class_="products list items product-items row")
+
         matching_guns = []
         if products_list:
+            logger.debug(
+                "Products list <ol> tag successfully retrieved. At least one matching gun should exist"
+            )
             # If no guns match filter criteria
             hits = products_list.find_all("li")
-            matching_guns = []
             for hit in hits:
                 item_details = hit.find(
                     "div", class_="product details product-item-details"
@@ -104,22 +116,26 @@ class TorsboGunScraper(GunScraperABC):
                 price_box = item_details.find(
                     "div", class_="price-box price-final_price"
                 )
-                # prepend website name to avoid collisons
+                # prepend website name to avoid collisions
                 item_id = "torsbo-" + price_box.attrs["data-product-id"]
 
                 # get price
                 price_str = price_box.find("span", class_="price").string.strip()
-                # strip 'kr' and blankspace
+                # strip 'kr' and blank spaces
                 price_str = price_str.replace("kr", "")
                 item_price = int(price_str.replace("\xa0", ""))
 
-                matching_guns.append(
-                    {
-                        "id": item_id,
-                        "description": item_desc,
-                        "price": item_price,
-                        "link": item_link,
-                    }
-                )
+                matching_gun = {
+                    "id": item_id,
+                    "description": item_desc,
+                    "price": item_price,
+                    "link": item_link,
+                }
+                matching_guns.append(matching_gun)
+                logger.debug(f"Found the following matching gun: {matching_gun}")
+        else:
+            logger.debug(
+                "Products list <ol> tag does not exist, should mean no matching guns"
+            )
 
         return matching_guns
