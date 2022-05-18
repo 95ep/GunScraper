@@ -3,7 +3,7 @@
 ## Setup
 
 1. Create a `config.yaml` at the root of the repo based on `config_template.yaml`.
-1. Create a Python3 virtual environment named `.venv` in the root of the repo
+1. Create a Python 3.9 virtual environment named `.venv` in the root of the repo
 1. Add Cron Job to run `runner.sh` at desired interval.
 
 Example Cron Job:
@@ -14,10 +14,17 @@ Example Cron Job:
 
 ## Improvements list
 
-1. Logging to file
-1. Install requirements as part of Shell-script
-1. Keep track of which guns notfications has already been sent for
-1. Add support for additional sites
-    1. Marks JoF/Vildmarken.se
-    1. JG Jakt
-    1. Wildmark Ullared
+* ~~Logging to file~~
+* Install requirements as part of Shell-script
+* Keep track of which guns notifications has already been sent for
+* Add is alive notification with configurable interval
+* Add flake8 checking
+* Add proper docstrings
+* Replace GunningForGuns with GunScraper
+* Test mode with emails only printed
+* Prettify the emails
+* Automated tests???
+* Add support for additional sites
+    * Marks JoF/Vildmarken.se
+    * JG Jakt
+    * Wildmark Ullared
