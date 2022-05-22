@@ -38,9 +38,10 @@ def send_email_notification(guns_list: List[Dict]):
         email_config["smtp_server"], email_config["ssl_port"], context=context
     ) as server:
         server.login(email_config["username"], email_config["password"])
-        server.sendmail(
-            email_config["sender"],
-            email_config["receiver"],
-            message.as_string(),
-        )
+        # server.sendmail(
+        #     email_config["sender"],
+        #     email_config["receiver"],
+        #     message.as_string(),
+        # )
+        logger.warning(f"Email intended to be sent: {message.as_string()}")
     logger.info(f"Email notification sent to {email_config['receiver']}")
