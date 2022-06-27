@@ -1,10 +1,16 @@
-import json
 from loguru import logger
 from pathlib import Path
+import time
 from typing import Dict, List
 import yaml
 
-from gun_scraper.notifier import send_email_notification
+from gun_scraper.file_io import (
+    read_guns_from_file,
+    read_notification_timestamp_from_file,
+    write_guns_to_file,
+    write_notification_timestamp_to_file,
+)
+from gun_scraper.notifier import send_alive_notification, send_gun_notification
 from gun_scraper.scrapers.torsbo import TorsboGunScraper
 
 
@@ -12,46 +18,6 @@ class GunScraperError(Exception):
     def __init__(self, message) -> None:
         super().__init__(message)
         logger.error(message)
-
-
-def read_guns_from_file(data_file: Path) -> List[Dict]:
-    """Read the guns stored in the data file.
-
-    Args:
-        data_file (Path): Path to file holding previously scraped guns
-
-    Raises:
-        GunScraperError: if the parent folder of the 'data_file' doesn't exist
-
-    Returns:
-        List[Dict]: List of guns stored in the data file, empty if no such file exists
-    """
-    if data_file.exists():
-        logger.debug(f"Data file {data_file} exists")
-        with open(data_file) as fp:
-            guns_list = json.load(fp)
-        logger.debug(f"The following guns loaded from file: {guns_list}")
-    else:
-        logger.info(f"Data file {data_file} doesn't exist.")
-        guns_list = []
-        if not data_file.parent.is_dir():
-            raise GunScraperError(
-                f"data_folder from config doesn't exist: {data_file.parent}"
-            )
-
-    return guns_list
-
-
-def write_guns_to_file(guns_list: List[Dict], data_file: Path) -> None:
-    """Write the found guns in list to file.
-
-    Args:
-        guns_list (List[Dict]): List of guns found during scraping
-        data_file (Path): path to file holding scraped guns
-    """
-    logger.debug(f"Writing the following guns {guns_list} to data file {data_file}")
-    with open(data_file, "w") as fp:
-        json.dump(guns_list, fp)
 
 
 def filter_scraped_guns(scraped_guns: List[Dict], old_guns: List[Dict]) -> List[Dict]:
@@ -70,8 +36,35 @@ def filter_scraped_guns(scraped_guns: List[Dict], old_guns: List[Dict]) -> List[
     return new_guns
 
 
+def check_latest_notification(alive_notification_interval: int, data_file: Path):
+    """Check time since latest notification and send alive notification if needed.
+
+    Args:
+        alive_notification_interval (int): Maximum interval, in hours, between
+            notifications
+        data_file (Path): path to file holding scraped guns
+    """
+    timestamp = read_notification_timestamp_from_file(data_file)
+    hours_since_notification = (time.time() - timestamp) / 3600
+    logger.debug(f"Sending notification every {alive_notification_interval} hours.")
+
+    # Send notification if the interval has elapsed or it's first time running the scraper
+    if hours_since_notification > alive_notification_interval or timestamp is None:
+        logger.info(
+            f"{hours_since_notification} hours elapsed since last notification, "
+            "sending notification!"
+        )
+        send_alive_notification()
+        write_notification_timestamp_to_file(data_file)
+    else:
+        logger.debug(
+            f"{hours_since_notification} hours elapsed since last notification, "
+            "not sending notification!"
+        )
+
+
 @logger.catch
-def gun_scraper():
+def main():
     # Run the entire process of scraping, sending email etc here
     # Add log sink
     logger.add(Path("logs", "gun_scraper-{time}.log"), retention="30 days")
@@ -111,9 +104,12 @@ def gun_scraper():
 
     # Send email
     if len(new_guns) > 0:
-        send_email_notification(new_guns)
+        send_gun_notification(new_guns)
+        write_notification_timestamp_to_file(data_file)
     else:
         logger.info("No new guns found. No notification sent")
+        # Check if alive notification should be sent
+        check_latest_notification(config["email"]["alive_msg_interval"], data_file)
 
     write_guns_to_file(scraped_guns, data_file)
 
@@ -121,4 +117,4 @@ def gun_scraper():
 
 
 if __name__ == "__main__":
-    gun_scraper()
+    main()

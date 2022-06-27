@@ -12,5 +12,6 @@ email:
   ssl_port: 465
   username: evan_elk
   password: KingOfTheForest
+  alive_msg_interval: 168
 
 data_folder: /home/davidduck/GunScraper/data
