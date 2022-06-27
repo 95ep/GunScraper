@@ -4,8 +4,6 @@ from pathlib import Path
 import time
 from typing import Dict, List, Optional
 
-from gun_scraper.main import GunScraperError
-
 INDENT_LEVEL = 4
 
 
@@ -48,9 +46,6 @@ def read_guns_from_file(data_file: Path) -> List[Dict]:
 
     Args:
         data_file (Path): Path to file holding previously scraped guns
-
-    Raises:
-        GunScraperError: if the parent folder of the 'data_file' doesn't exist
 
     Returns:
         List[Dict]: List of guns stored in the data file, empty if no such file exists

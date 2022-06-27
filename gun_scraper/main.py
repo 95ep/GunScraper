@@ -4,10 +4,14 @@ import time
 from typing import Dict, List
 import yaml
 
-
-import gun_scraper.file_io
-import gun_scraper.notifier
-import gun_scraper.scrapers.torsbo
+from gun_scraper.file_io import (
+    read_guns_from_file,
+    read_notification_timestamp_from_file,
+    write_guns_to_file,
+    write_notification_timestamp_to_file,
+)
+from gun_scraper.notifier import send_alive_notification, send_gun_notification
+from gun_scraper.scrapers.torsbo import TorsboGunScraper
 
 
 class GunScraperError(Exception):
@@ -40,7 +44,7 @@ def check_latest_notification(alive_notification_interval: int, data_file: Path)
             notifications
         data_file (Path): path to file holding scraped guns
     """
-    timestamp = gun_scraper.file_io.read_notification_timestamp_from_file(data_file)
+    timestamp = read_notification_timestamp_from_file(data_file)
     hours_since_notification = (time.time() - timestamp) / 3600
     logger.debug(f"Sending notification every {alive_notification_interval} hours.")
 
@@ -50,8 +54,8 @@ def check_latest_notification(alive_notification_interval: int, data_file: Path)
             f"{hours_since_notification} hours elapsed since last notification, "
             "sending notification!"
         )
-        gun_scraper.notifier.send_alive_notification()
-        gun_scraper.file_io.write_notification_timestamp_to_file(data_file)
+        send_alive_notification()
+        write_notification_timestamp_to_file(data_file)
     else:
         logger.debug(
             f"{hours_since_notification} hours elapsed since last notification, "
@@ -77,9 +81,7 @@ def main():
     scrapers = []
     for site in scraper_config["sites"]:
         if site == "torsbo":
-            scrapers.append(
-                gun_scraper.scrapers.torsbo.TorsboGunScraper(scraper_config["filters"])
-            )
+            scrapers.append(TorsboGunScraper(scraper_config["filters"]))
             logger.debug("TorsboGunScraper added to list of scrapers")
         else:
             raise GunScraperError(f"Site {site} is not supported!")
@@ -97,19 +99,19 @@ def main():
 
     # Filter away guns that notification has already been sent for
     data_file = Path(config["data_folder"], "data.json")
-    previously_found_guns = gun_scraper.file_io.read_guns_from_file(data_file)
+    previously_found_guns = read_guns_from_file(data_file)
     new_guns = filter_scraped_guns(scraped_guns, previously_found_guns)
 
     # Send email
     if len(new_guns) > 0:
-        gun_scraper.notifier.send_gun_notification(new_guns)
-        gun_scraper.file_io.write_notification_timestamp_to_file(data_file)
+        send_gun_notification(new_guns)
+        write_notification_timestamp_to_file(data_file)
     else:
         logger.info("No new guns found. No notification sent")
         # Check if alive notification should be sent
         check_latest_notification(config["email"]["alive_msg_interval"], data_file)
 
-    gun_scraper.file_io.write_guns_to_file(scraped_guns, data_file)
+    write_guns_to_file(scraped_guns, data_file)
 
     logger.info("GunScraper finished")
 
