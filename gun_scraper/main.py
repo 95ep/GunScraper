@@ -1,5 +1,6 @@
 from loguru import logger
 from pathlib import Path
+import time
 from typing import Dict, List
 import yaml
 
@@ -29,6 +30,33 @@ def filter_scraped_guns(scraped_guns: List[Dict], old_guns: List[Dict]) -> List[
     new_guns = [gun for gun in scraped_guns if gun["id"] not in ids_old_guns]
     logger.info(f"Filtering complete. The following new guns were found: {new_guns}")
     return new_guns
+
+
+def check_latest_notification(alive_notification_interval: int, data_file: Path):
+    """Check time since latest notification and send alive notification if needed.
+
+    Args:
+        alive_notification_interval (int): Maximum interval, in hours, between
+            notifications
+        data_file (Path): path to file holding scraped guns
+    """
+    timestamp = gun_scraper.file_io.read_notification_timestamp_from_file(data_file)
+    hours_since_notification = (time.time() - timestamp) / 3600
+    logger.debug(f"Sending notification every {alive_notification_interval} hours.")
+
+    # Send notification if the interval has elapsed or it's first time running the scraper
+    if hours_since_notification > alive_notification_interval or timestamp is None:
+        logger.info(
+            f"{hours_since_notification} hours elapsed since last notification, "
+            "sending notification!"
+        )
+        gun_scraper.notifier.send_alive_notification()
+        gun_scraper.file_io.write_notification_timestamp_to_file(data_file)
+    else:
+        logger.debug(
+            f"{hours_since_notification} hours elapsed since last notification, "
+            "not sending notification!"
+        )
 
 
 @logger.catch
@@ -74,9 +102,12 @@ def main():
 
     # Send email
     if len(new_guns) > 0:
-        gun_scraper.notifier.send_email_notification(new_guns)
+        gun_scraper.notifier.send_gun_notification(new_guns)
+        gun_scraper.file_io.write_notification_timestamp_to_file(data_file)
     else:
         logger.info("No new guns found. No notification sent")
+        # Check if alive notification should be sent
+        check_latest_notification(config["email"]["alive_msg_interval"], data_file)
 
     gun_scraper.file_io.write_guns_to_file(scraped_guns, data_file)
 
