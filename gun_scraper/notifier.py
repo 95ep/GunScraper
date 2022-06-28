@@ -26,7 +26,7 @@ def send_gun_notification(guns_list: List[Dict]):
         email_body += f"{gun['description']} at the price {gun['price']} kr. Link: {gun['link']} \n"
     message = MIMEText(email_body, "plain")  # TODO - use multipart and add HTML
     n_guns_found = len(guns_list)
-    message["Subject"] = f"Gunning for Guns: {n_guns_found} matching guns found!"
+    message["Subject"] = f"GunScraper: {n_guns_found} matching guns found!"
     message["From"] = email_config["sender"]
     message["To"] = email_config["receiver"]
     logger.debug("Email message created")
