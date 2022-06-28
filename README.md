@@ -11,20 +11,3 @@ Example Cron Job:
 ```
 0 */12 * * * <path-to-repo>/GunScraper/runner.sh >/tmp/stdout.log 2>/tmp/stderr.log
 ```
-
-## Improvements list
-
-* ~~Logging to file~~
-* Install requirements as part of Shell-script
-* Keep track of which guns notifications has already been sent for
-* Add is alive notification with configurable interval
-* Add flake8 checking
-* Add proper docstrings
-* Replace GunningForGuns with GunScraper
-* Test mode with emails only printed
-* Prettify the emails
-* Automated tests???
-* Add support for additional sites
-    * Marks JoF/Vildmarken.se
-    * JG Jakt
-    * Wildmark Ullared
