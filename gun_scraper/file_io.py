@@ -1,14 +1,23 @@
-from loguru import logger
+"""Module collecting functions for file I/O."""
 import json
 from pathlib import Path
 import time
 from typing import Dict, List, Optional
 
+from loguru import logger
+
 INDENT_LEVEL = 4
 
 
 class GunScraperFileIOError(Exception):
-    def __init__(self, message) -> None:
+    """Exception to raise if anything goes wrong in the file_io module."""
+
+    def __init__(self, message: str) -> None:
+        """Initialize an exception instance and log the message.
+
+        Args:
+            message (str): error message for the exception
+        """
         super().__init__(message)
         logger.error(message)
 
@@ -32,13 +41,12 @@ def load_data_file(data_file: Path) -> Optional[Dict]:
         logger.debug(f"The following content loaded from file: {data_content}")
     else:
         logger.warning(f"Data file {data_file} doesn't exist.")
-        data_content = {}
         if not data_file.parent.is_dir():
             raise GunScraperFileIOError(
                 f"data_folder from config doesn't exist: {data_file.parent}"
             )
 
-    return data_content
+    return {}
 
 
 def read_guns_from_file(data_file: Path) -> List[Dict]:
