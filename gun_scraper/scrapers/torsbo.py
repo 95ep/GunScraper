@@ -107,8 +107,12 @@ class TorsboGunScraper(GunScraperABC):
 
         if url_filters:
             self.query_url += "?"
+            first_filter = True
             for url_filter in url_filters:
-                self.query_url += url_filter + "&"
+                if not first_filter:
+                    self.query_url += "&"
+                self.query_url += url_filter
+                first_filter = False
 
         logger.debug(f"URL successfully built: {self.query_url}")
 
