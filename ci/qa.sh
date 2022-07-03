@@ -1,2 +1,2 @@
 #!/bin/bash
-flake8
+flake8 gun_scraper
