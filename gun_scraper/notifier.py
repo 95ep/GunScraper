@@ -1,17 +1,20 @@
+"""Module collecting functions for creating and sending notifications."""
 from email.mime.text import MIMEText
+from pathlib import Path
+import smtplib
+import ssl
+from typing import Dict, List
+
+
 from loguru import logger
 import yaml
-from typing import List, Dict
-from pathlib import Path
-import smtplib, ssl
 
 
 def send_gun_notification(guns_list: List[Dict]):
     """Take the list of guns and send an email notification.
 
     Args:
-        guns_list (List[str, str, float, str]): List of matching guns. Each list item is tuple
-            (id, desc, price, link)
+        guns_list (List[Dict]): List of matching guns
     """
     logger.info("Sending notification for new guns")
     # Read config file with config for sending emails
@@ -23,7 +26,10 @@ def send_gun_notification(guns_list: List[Dict]):
 
     email_body = "The following guns were found: \n"
     for gun in guns_list:
-        email_body += f"{gun['description']} at the price {gun['price']} kr. Link: {gun['link']} \n"
+        email_body += (
+            f"{gun['description']} at the price {gun['price']} kr. "
+            "Link: {gun['link']} \n"
+        )
     message = MIMEText(email_body, "plain")  # TODO - use multipart and add HTML
     n_guns_found = len(guns_list)
     message["Subject"] = f"GunScraper: {n_guns_found} matching guns found!"
@@ -54,7 +60,7 @@ def send_alive_notification():
 
     email_body = "No new gun matching the filter found, but I'm still looking!"
     message = MIMEText(email_body, "plain")  # TODO - use multipart and add HTML
-    message["Subject"] = f"GunScraper: No new guns found"
+    message["Subject"] = "GunScraper: No new guns found"
     message["From"] = email_config["sender"]
     message["To"] = email_config["receiver"]
     logger.debug("Email for alive notification created")

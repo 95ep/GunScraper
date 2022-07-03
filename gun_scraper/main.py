@@ -1,7 +1,9 @@
-from loguru import logger
+"""Module containing the main functionality of GunScraper."""
 from pathlib import Path
 import time
 from typing import Dict, List
+
+from loguru import logger
 import yaml
 
 from gun_scraper.file_io import (
@@ -15,7 +17,14 @@ from gun_scraper.scrapers.torsbo import TorsboGunScraper
 
 
 class GunScraperError(Exception):
-    def __init__(self, message) -> None:
+    """Custom error class for GunScraper."""
+
+    def __init__(self, message: str) -> None:
+        """Create error instance and log error message.
+
+        Args:
+            message (str): message to include in error
+        """
         super().__init__(message)
         logger.error(message)
 
@@ -48,8 +57,8 @@ def check_latest_notification(alive_notification_interval: int, data_file: Path)
     hours_since_notification = (time.time() - timestamp) / 3600
     logger.debug(f"Sending notification every {alive_notification_interval} hours.")
 
-    # Send notification if the interval has elapsed or it's first time running the scraper
-    if hours_since_notification > alive_notification_interval or timestamp is None:
+    # Send notification if notification interval has elapsed
+    if hours_since_notification > alive_notification_interval:
         logger.info(
             f"{hours_since_notification} hours elapsed since last notification, "
             "sending notification!"
@@ -65,6 +74,11 @@ def check_latest_notification(alive_notification_interval: int, data_file: Path)
 
 @logger.catch
 def main():
+    """Execute one round of scraping.
+
+    Raises:
+        GunScraperError: if a unsupported site is included in the config
+    """
     # Run the entire process of scraping, sending email etc here
     # Add log sink
     logger.add(Path("logs", "gun_scraper-{time}.log"), retention="30 days")
