@@ -10,11 +10,11 @@ class GunScraperABC(ABC):
     """Abstract class for all site scrapers."""
 
     @abstractmethod
-    def __init__(self, filters: Dict[str, str]):
+    def __init__(self, filter_input: Dict[str, str]):
         """Create the scraper object.
 
         Args:
-            filters (Dict[str, str]): filter settings from config
+            filter_input (Dict[str, str]): filter settings from config
         """
 
     @abstractmethod
