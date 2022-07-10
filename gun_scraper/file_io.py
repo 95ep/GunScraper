@@ -22,7 +22,7 @@ class GunScraperFileIOError(Exception):
         logger.error(message)
 
 
-def load_data_file(data_file: Path) -> Optional[Dict]:
+def load_data_file(data_file: Path) -> Dict:
     """Load content of the data file.
 
     Args:
@@ -39,14 +39,14 @@ def load_data_file(data_file: Path) -> Optional[Dict]:
         with open(data_file) as fp:
             data_content = json.load(fp)
         logger.debug(f"The following content loaded from file: {data_content}")
+        return data_content
     else:
         logger.warning(f"Data file {data_file} doesn't exist.")
         if not data_file.parent.is_dir():
             raise GunScraperFileIOError(
                 f"data_folder from config doesn't exist: {data_file.parent}"
             )
-
-    return {}
+        return {}
 
 
 def read_guns_from_file(data_file: Path) -> List[Dict]:
@@ -76,9 +76,6 @@ def write_guns_to_file(guns_list: List[Dict], data_file: Path) -> None:
         data_file (Path): path to file holding scraped guns
     """
     data_content = load_data_file(data_file)
-    if not data_content:
-        # Create dict structure if file did not exist before
-        data_content = {"last_email_timestamp": None, "found_guns": None}
 
     logger.debug(f"Writing the following list of found guns to file: {guns_list}")
     data_content["found_guns"] = guns_list
