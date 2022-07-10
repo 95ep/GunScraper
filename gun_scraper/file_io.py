@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from loguru import logger
 

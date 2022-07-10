@@ -28,8 +28,9 @@ def send_gun_notification(guns_list: List[Dict]):
     for gun in guns_list:
         email_body += (
             f"{gun['description']} at the price {gun['price']} kr. "
-            "Link: {gun['link']} \n"
+            f"Link: {gun['link']} \n"
         )
+    logger.debug(f"The following email body was formulated:\n {email_body}")
     message = MIMEText(email_body, "plain")  # TODO - use multipart and add HTML
     n_guns_found = len(guns_list)
     message["Subject"] = f"GunScraper: {n_guns_found} matching guns found!"
@@ -96,6 +97,7 @@ def send_email(
         username (str): username to authenticate on the server
         password (str): password to authenticate on the server
     """
+    logger.info(f"Email intended to be sent: {message.as_string()}")
     # Create a secure SSL context
     context = ssl.create_default_context()
     # Connect to configured SMTP server
@@ -106,5 +108,4 @@ def send_email(
             receiver,
             message.as_string(),
         )
-        logger.warning(f"Email intended to be sent: {message.as_string()}")
     logger.info(f"Email notification sent to {receiver}")
