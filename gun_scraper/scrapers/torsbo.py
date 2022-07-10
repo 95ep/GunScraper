@@ -1,12 +1,11 @@
 """Scraper for the site Torsbo handels."""
 from typing import Dict, List, Union
 
-from bs4 import BeautifulSoup
 from loguru import logger
-import requests
 
 
 from gun_scraper.scrapers.scraper_abc import GunScraperABC
+from gun_scraper.utils import soup_from_url
 
 
 class TorsboGunScraperError(Exception):
@@ -124,8 +123,7 @@ class TorsboGunScraper(GunScraperABC):
         Returns:
             List[Dict[str, Union[str, int]]]:  List of matching guns.
         """
-        result_page = requests.get(self.query_url)
-        soup = BeautifulSoup(result_page.content, "html.parser")
+        soup = soup_from_url(self.query_url)
         logger.debug("Result page successfully retrieved")
 
         # If no gun match filter criteria, the <ol> below will be missing from page

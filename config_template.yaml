@@ -4,6 +4,7 @@ scraper:
     handedness: left
   sites:
     - torsbo
+    - jg
 
 email:
   sender: no-reply@gfg.com

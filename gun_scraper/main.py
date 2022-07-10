@@ -13,6 +13,7 @@ from gun_scraper.file_io import (
     write_notification_timestamp_to_file,
 )
 from gun_scraper.notifier import send_alive_notification, send_gun_notification
+from gun_scraper.scrapers.jg import JGGunScraper
 from gun_scraper.scrapers.torsbo import TorsboGunScraper
 
 
@@ -94,9 +95,13 @@ def main():
     # Create list of scrapers to use
     scrapers = []
     for site in scraper_config["sites"]:
+        filter_config = scraper_config["filters"]
         if site == "torsbo":
-            scrapers.append(TorsboGunScraper(scraper_config["filters"]))
+            scrapers.append(TorsboGunScraper(filter_config))
             logger.debug("TorsboGunScraper added to list of scrapers")
+        elif site == "jg":
+            scrapers.append(JGGunScraper(filter_config))
+            logger.debug("JGGunScraper added to list of scrapers")
         else:
             raise GunScraperError(f"Site {site} is not supported!")
 
@@ -105,7 +110,7 @@ def main():
     for scraper in scrapers:
         new_matches = scraper.scrape()
         if len(new_matches) > 0:
-            scraped_guns.append(*new_matches)
+            scraped_guns.extend(new_matches)
 
     n_matching_guns = len(scraped_guns)
     logger.info(f"Scraping complete. {n_matching_guns} matching gun(s) found")
