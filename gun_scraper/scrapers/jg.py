@@ -94,11 +94,19 @@ class JGGunScraper(GunScraperABC):
         Returns:
             List[Dict[str, Union[str, int]]]: guns matching the handedness criteria
         """
+        logger.debug(
+            f"Applying the following handedness filter value: {self.handedness}"
+        )
         guns_matching_handedness = []
         # Check if handedness keyword is present in description
         for gun in found_guns:
             if self.handedness in gun["description"].lower():
+                logger.debug(f"The following gun matches the handedness filter:\n{gun}")
                 guns_matching_handedness.append(gun)
+            else:
+                logger.debug(
+                    f"The following gun doesn't match the handedness filter:\n{gun}"
+                )
 
         return guns_matching_handedness
 
