@@ -1,13 +1,47 @@
 # GunScraper
 
+A simple scraper for finding guns, according to search criteria, from Swedish gun shops.
+
+Currently two shops are supported: [Torsbo Handels](https://torsbohandels.com/) and [JG Jakt](https://www.jgjakt.se/).
+
 ## Setup
 
-1. Create a `config.yaml` at the root of the repo based on `config_template.yaml`.
-1. Create a Python 3.9 virtual environment named `.venv` in the root of the repo
-1. Add Cron Job to run `runner.sh` at desired interval.
+In order to install and setup GunScraper, follow the steps below:
 
-Example Cron Job:
+1. Create a virtual environment
+1. Install GunScraper: `pip install gun_scraper`
+1. Download `misc/runner.sh` and edit it with the path to the virtual environment
+1. Download the configuration template `misc/config.yaml` and place it in the same folder as `runner.sh`
+1. Update the configuration
+1. Create a Cron Job to run `runner.sh` at desired interval
 
+Example Cron Job, running every 12th hour:
 ```
 0 */12 * * * <path-to-repo>/GunScraper/runner.sh >/tmp/stdout.log 2>/tmp/stderr.log
+```
+
+## Config
+
+The `config.yaml` follows the following syntax:
+
+```yaml
+scraper:
+  filters:
+    # Dictionary defining which filters to apply
+    caliber: # Possible values: 22lr, 22WMR or 308win
+    handedness: # Possible values: left
+  sites:
+    - # List defining which sites to scrape. Supported values: torsbo and jg
+
+email:
+  sender: # email address that will appear as sender of the notification emails
+  receiver: # email that will receive notification emails
+  smtp_server: # hostname of smtp server used to send notifications
+  ssl_port: # SSL port of the 'smtp_server'
+  username: # username for the 'smtp_server'
+  password: # password for the 'smtp_server'
+  alive_msg_interval: # interval (in hours) to send notification in case no guns matching search criteria is found
+
+logs_folder: # folder to store log data in
+data_folder: # folder to store persistent data in
 ```
