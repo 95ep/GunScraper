@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=65.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gun-scraper"
+version = "0.0.0"
+description = "Scraper for finding guns according to search criteria from Swedish gun shops"
+readme = "README.md"
+authors = [{ name = "Erik Persson", email = "erik.ao.persson@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+]
+dependencies = [
+    "beautifulsoup4 >= 4.11.1",
+    "loguru >= 0.6.0",
+    "PyYAML >= 6.0",
+    "requests >= 2.27.1",
+]
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/95ep/GunScraper"
+
+[project.scripts]
+gun_scraper = "gun_scraper.__main__:main"
+
+[tool.bumpver]
+current_version = "0.0.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
+"src/gun_scraper/__init__.py" = ["{version}"]

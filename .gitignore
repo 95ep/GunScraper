@@ -1,10 +1,12 @@
-.venv
+.venv*
 .vscode
 __pycache__
 
 # Exclude parts of repo not meant for git
-/config/*
-/data/*
-/logs/*
+/config
+/data
+/dist
+/logs
 /tests/*
 config.yaml
+/runner.sh
