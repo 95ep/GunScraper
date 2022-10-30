@@ -15,5 +15,4 @@ email:
   password: KingOfTheForest
   alive_msg_interval: 168
 
-logs_folder: /home/davidduck/GunScraper/logs
 data_folder: /home/davidduck/GunScraper/data
