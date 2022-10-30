@@ -8,5 +8,5 @@ __pycache__
 /dist
 /logs
 /tests/*
-config.yaml
+/config.yaml
 /runner.sh

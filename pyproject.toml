@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gun-scraper"
 version = "0.0.0"
-description = "Scraper for finding guns according to search criteria from Swedish gun shops"
+description = "A simple scraper for finding guns, according to search criteria, from Swedish gun shops"
 readme = "README.md"
 authors = [{ name = "Erik Persson", email = "erik.ao.persson@gmail.com" }]
 license = { file = "LICENSE" }
