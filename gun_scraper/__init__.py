@@ -1,1 +1,0 @@
-"""GunScraper package."""
