@@ -42,6 +42,5 @@ email:
   password: # password for the 'smtp_server'
   alive_msg_interval: # interval (in hours) to send notification in case no guns matching search criteria is found
 
-logs_folder: # folder to store log data in
 data_folder: # folder to store persistent data in
 ```
