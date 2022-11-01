@@ -12,7 +12,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
 ]
 
-packages = [{ include = "gun_scraper", from = "src" }]
+packages = [{ include = "gun_scraper" }]
 homepage = "https://github.com/95ep/GunScraper"
 
 [tool.poetry.scripts]
