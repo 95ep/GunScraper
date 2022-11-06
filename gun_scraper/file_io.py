@@ -1,7 +1,7 @@
 """Module collecting functions for file I/O."""
 import json
 from pathlib import Path
-import time
+from time import time
 from typing import Dict, List
 
 from loguru import logger
@@ -112,7 +112,7 @@ def write_notification_timestamp_to_file(data_file: Path) -> None:
     """
     data_content = load_data_file(data_file)
 
-    timestamp = time.time()
+    timestamp = time()
     logger.debug(f"Writing the following timestamp to file: {timestamp}")
     data_content["latest_notification_timestamp"] = timestamp
 
