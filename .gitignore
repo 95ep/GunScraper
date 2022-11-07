@@ -6,10 +6,12 @@ __pycache__
 /config
 /data
 /logs
-/tests/*
 /config.yaml
 /runner.sh
 
 # Exclude build artifacts
 /dist
 *.egg-info
+
+# Exclude test artifacts
+.coverage

@@ -1,7 +1,7 @@
 """Module collecting functions for file I/O."""
 import json
 from pathlib import Path
-import time
+from time import time
 from typing import Dict, List
 
 from loguru import logger
@@ -34,19 +34,19 @@ def load_data_file(data_file: Path) -> Dict:
     Returns:
         Dict: Content of the data file, or empty dict if it doesn't exist
     """
-    if data_file.exists():
-        logger.debug(f"Data file {data_file} exists")
-        with open(data_file) as fp:
-            data_content = json.load(fp)
-        logger.debug(f"The following content loaded from file: {data_content}")
-        return data_content
-    else:
+    if not data_file.exists():
         logger.warning(f"Data file {data_file} doesn't exist.")
         if not data_file.parent.is_dir():
             raise GunScraperFileIOError(
                 f"data_folder from config doesn't exist: {data_file.parent}"
             )
         return {}
+
+    logger.debug(f"Data file {data_file} exists")
+    with open(data_file) as fp:
+        data_content = json.load(fp)
+    logger.debug(f"The following content loaded from file: {data_content}")
+    return data_content
 
 
 def read_guns_from_file(data_file: Path) -> List[Dict]:
@@ -112,7 +112,7 @@ def write_notification_timestamp_to_file(data_file: Path) -> None:
     """
     data_content = load_data_file(data_file)
 
-    timestamp = time.time()
+    timestamp = time()
     logger.debug(f"Writing the following timestamp to file: {timestamp}")
     data_content["latest_notification_timestamp"] = timestamp
 
