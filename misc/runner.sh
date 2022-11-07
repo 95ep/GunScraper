@@ -1,5 +1,5 @@
 #!/bin/bash
-# Chang working dir to script folder
+# Change working dir to script folder
 script_folder=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$script_folder"
 
