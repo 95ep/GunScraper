@@ -9,10 +9,11 @@ Currently two shops are supported: [Torsbo Handels](https://torsbohandels.com/) 
 In order to install and setup GunScraper, follow the steps below:
 
 1. Create a virtual environment
-1. Install GunScraper: `pip install gun_scraper`
-1. Download `misc/runner.sh` and edit it with the path to the virtual environment
-1. Download the configuration template `misc/config.yaml` and place it in the same folder as `runner.sh`
+1. Install GunScraper and dependencies: `pip install gun_scraper`
+1. Download the configuration template `misc/config.yaml`
 1. Update the configuration
+1. Download `misc/runner.sh` and edit it with the path to the virtual environment
+  and config file
 1. Create a Cron Job to run `runner.sh` at desired interval
 
 Example Cron Job, running every 12th hour:
@@ -43,4 +44,5 @@ email:
   alive_msg_interval: # interval (in hours) to send notification in case no guns matching search criteria is found
 
 data_folder: # folder to store persistent data in
+logs_folder: # folder to store log output in
 ```

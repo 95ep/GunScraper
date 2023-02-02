@@ -1,4 +1,5 @@
 """Module containing the main functionality of GunScraper."""
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 import time
 from typing import Dict, List
@@ -6,6 +7,7 @@ from typing import Dict, List
 from loguru import logger
 import yaml
 
+from gun_scraper import __version__
 from gun_scraper.file_io import (
     read_guns_from_file,
     read_notification_timestamp_from_file,
@@ -73,6 +75,34 @@ def check_latest_notification(alive_notification_interval: int, data_file: Path)
         )
 
 
+def parse_args() -> Namespace:
+    """Setup and parse command line arguments.
+
+    Returns:
+        Namespace: the parsed arguments
+    """
+    parser = ArgumentParser(
+        description="Scrape guns according to search criteria",
+        prog="GunScraper",
+        add_help=False,
+    )
+
+    required_args = parser.add_argument_group("required arguments")
+    required_args.add_argument(
+        "-c", "--config-file", required=True, help="path to the config file"
+    )
+
+    optional_args = parser.add_argument_group("optional arguments")
+    optional_args.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
+    )
+    optional_args.add_argument(
+        "-h", "--help", action="help", help="show this help message and exit"
+    )
+
+    return parser.parse_args()
+
+
 @logger.catch
 def main():
     """Execute one round of scraping.
@@ -80,15 +110,17 @@ def main():
     Raises:
         GunScraperError: if a unsupported site is included in the config
     """
-    # Run the entire process of scraping, sending email etc here
-    # Add log sink
-    logger.add(Path("logs", "gun_scraper-{time}.log"), retention="30 days")
-    logger.info("GunScraper started")
-
-    # Load some config file
-    config_file_path = Path("config.yaml")
+    # Load config file
+    args = parse_args()
+    config_file_path = Path(args.config_file)
     with open(config_file_path) as f:
         config = yaml.safe_load(f)
+
+    # Add log sink
+    log_folder = Path(config["logs_folder"])
+    logger.add(log_folder.joinpath("gun_scraper-{time}.log"), retention="30 days")
+    logger.info("GunScraper started")
+
     scraper_config = config["scraper"]
     logger.debug(f"The following config is read: {config}")
 
