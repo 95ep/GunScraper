@@ -5,5 +5,6 @@ cd "$script_folder"
 
 venv_path=<Enter path to virtual environment>
 source ${venv_path}/bin/activate
-gun_scraper
+config_file=<Enter path to config file>
+gun_scraper -c ${config_file}
 deactivate

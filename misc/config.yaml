@@ -16,3 +16,4 @@ email:
   alive_msg_interval: 168
 
 data_folder: /home/davidduck/GunScraper/data
+logs_folder: /home/davidduck/GunScraper/logs
