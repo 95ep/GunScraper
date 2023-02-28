@@ -41,6 +41,7 @@ pytest = "^7.2.0"
 pytest-cov = "^4.0.0"
 pytest-random-order = "^1.0.4"
 pytest-mock = "^3.10.0"
+bumpver = "^2022.1120"
 
 [build-system]
 requires = ["poetry-core"]
@@ -52,7 +53,7 @@ version_pattern = "MAJOR.MINOR.PATCH"
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
-"src/gun_scraper/__init__.py" = ["{version}"]
+"gun_scraper/__init__.py" = ["{version}"]
 
 [tool.pytest.ini_options]
 addopts = [
