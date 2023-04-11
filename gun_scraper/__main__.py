@@ -168,7 +168,7 @@ def main():
         logger.info("No new guns found. No notification sent")
         # Check if alive notification should be sent
         check_latest_notification(
-            config["email"]["alive_msg_interval"], data_file, config_file_path
+            config["email"]["alive_msg_interval"], config_file_path, data_file
         )
 
     write_guns_to_file(scraped_guns, data_file)

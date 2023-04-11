@@ -124,7 +124,6 @@ class JaktmarkenGunScraper(GunScraperABC):
             gun_tags = result_page_soup.find_all(
                 "li", class_="product-small product-small-vertical-small"
             )
-            logger.debug(gun_tags)
             for tag in gun_tags:
                 matching_guns.append(self._parse_gun_tag(tag))
 
