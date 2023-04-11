@@ -10,7 +10,7 @@ from gun_scraper.utils import soup_from_url
 
 
 class JGScraperError(Exception):
-    """Exception to raise when something goes wrong in the JG module."""
+    """Exception to raise when something goes wrong in the JG scraper."""
 
     def __init__(self, message) -> None:
         """Create the error instance and log the error message.
@@ -34,7 +34,7 @@ class JGGunScraper(GunScraperABC):
     supported_handedness = {"left": "vänster"}
 
     def __init__(self, filter_input: Dict[str, str]):
-        """Initialize a scraper object for Torsbo.
+        """Initialize a scraper object for JG.
 
         Args:
             filter_input (Dict[str, str]): filter settings from config
@@ -109,26 +109,6 @@ class JGGunScraper(GunScraperABC):
                 )
 
         return guns_matching_handedness
-
-    def _parse_filters(self, filter_input: Dict[str, str]):
-        """Parse the filter input.
-
-        Args:
-            filter_input (Dict[str, str]): filter settings from config
-
-        Raises:
-            JGScraperError: if an unsupported filter key is included
-                in the input
-        """
-        logger.debug(f"Parsing filters: {filter_input}")
-        for filter_key, filter_value in filter_input.items():
-            if filter_key == "handedness":
-                self._set_handedness_filter(filter_value)
-            elif filter_key == "caliber":
-                self._set_caliber_filter(filter_value)
-            else:
-                raise JGScraperError(f"Filter type '{filter_key}' not supported!")
-        logger.debug("Filters parsed")
 
     def _build_url(self) -> None:
         """Build the query url."""

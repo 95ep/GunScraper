@@ -15,6 +15,7 @@ from gun_scraper.file_io import (
     write_notification_timestamp_to_file,
 )
 from gun_scraper.notifier import send_alive_notification, send_gun_notification
+from gun_scraper.scrapers.jaktmarken import JaktmarkenGunScraper
 from gun_scraper.scrapers.jg import JGGunScraper
 from gun_scraper.scrapers.torsbo import TorsboGunScraper
 
@@ -48,12 +49,15 @@ def filter_scraped_guns(scraped_guns: List[Dict], old_guns: List[Dict]) -> List[
     return new_guns
 
 
-def check_latest_notification(alive_notification_interval: int, data_file: Path):
+def check_latest_notification(
+    alive_notification_interval: int, config_file: Path, data_file: Path
+):
     """Check time since latest notification and send alive notification if needed.
 
     Args:
         alive_notification_interval (int): Maximum interval, in hours, between
             notifications
+        config_file (Path): path to config file
         data_file (Path): path to file holding scraped guns
     """
     timestamp = read_notification_timestamp_from_file(data_file)
@@ -66,7 +70,7 @@ def check_latest_notification(alive_notification_interval: int, data_file: Path)
             f"{hours_since_notification} hours elapsed since last notification, "
             "sending notification!"
         )
-        send_alive_notification()
+        send_alive_notification(config_file)
         write_notification_timestamp_to_file(data_file)
     else:
         logger.debug(
@@ -134,6 +138,9 @@ def main():
         elif site == "jg":
             scrapers.append(JGGunScraper(filter_config))
             logger.debug("JGGunScraper added to list of scrapers")
+        elif site == "jaktmarken":
+            scrapers.append(JaktmarkenGunScraper(filter_config))
+            logger.debug("JGGunScraper added to list of scrapers")
         else:
             raise GunScraperError(f"Site {site} is not supported!")
 
@@ -155,12 +162,14 @@ def main():
 
     # Send email
     if len(new_guns) > 0:
-        send_gun_notification(new_guns)
+        send_gun_notification(new_guns, config_file_path)
         write_notification_timestamp_to_file(data_file)
     else:
         logger.info("No new guns found. No notification sent")
         # Check if alive notification should be sent
-        check_latest_notification(config["email"]["alive_msg_interval"], data_file)
+        check_latest_notification(
+            config["email"]["alive_msg_interval"], data_file, config_file_path
+        )
 
     write_guns_to_file(scraped_guns, data_file)
 

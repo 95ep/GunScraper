@@ -10,16 +10,16 @@ from loguru import logger
 import yaml
 
 
-def send_gun_notification(guns_list: List[Dict]):
+def send_gun_notification(guns_list: List[Dict], config_file: Path):
     """Take the list of guns and send an email notification.
 
     Args:
         guns_list (List[Dict]): List of matching guns
+        config_file: path to config file
     """
     logger.info("Sending notification for new guns")
     # Read config file with config for sending emails
-    config_file_path = Path("config.yaml")
-    with open(config_file_path) as f:
+    with open(config_file) as f:
         config = yaml.safe_load(f)
     email_config = config["email"]
     logger.debug(f"The following email config is read: {email_config}")
@@ -49,12 +49,15 @@ def send_gun_notification(guns_list: List[Dict]):
     )
 
 
-def send_alive_notification():
-    """Send email notifying subscriber that the scraper is still alive."""
+def send_alive_notification(config_file: Path):
+    """Send email notifying subscriber that the scraper is still alive.
+
+    Args:
+        config_file: path to config file
+    """
     logger.info("Sending alive notification")
     # Read config file and extract config for sending emails
-    config_file_path = Path("config.yaml")
-    with open(config_file_path) as f:
+    with open(config_file) as f:
         config = yaml.safe_load(f)
     email_config = config["email"]
     logger.debug(f"The following email config is read: {email_config}")
