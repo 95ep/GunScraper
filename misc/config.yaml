@@ -5,6 +5,7 @@ scraper:
   sites:
     - torsbo
     - jg
+    - jaktmarken
 
 email:
   sender: no-reply@gfg.com

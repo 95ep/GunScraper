@@ -2,7 +2,11 @@
 
 A simple scraper for finding guns, according to search criteria, from Swedish gun shops.
 
-Currently two shops are supported: [Torsbo Handels](https://torsbohandels.com/) and [JG Jakt](https://www.jgjakt.se/).
+Currently three shops are supported: 
+
+* [Torsbo Handels](https://torsbohandels.com/) 
+* [JG Jakt](https://www.jgjakt.se/)
+* [Jaktmarken.se/Marks Jakt och Fiskecenter](https://www.jaktmarken.se)
 
 ## Setup
 
@@ -32,7 +36,7 @@ scraper:
     caliber: # Possible values: 22lr, 22WMR or 308win
     handedness: # Possible values: left
   sites:
-    - # List defining which sites to scrape. Supported values: torsbo and jg
+    - # List defining which sites to scrape. Supported values: 'torsbo', 'jg' and 'jaktmarken'
 
 email:
   sender: # email address that will appear as sender of the notification emails
