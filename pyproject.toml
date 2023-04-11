@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gun-scraper"
-version = "0.2.0"
+version = "0.2.1"
 description = "A simple scraper for finding guns, according to search criteria, from Swedish gun shops"
 authors = ["Erik Persson <erik.ao.persson@gmail.com>"]
 readme = "README.md"
@@ -48,7 +48,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.bumpver]
-current_version = "0.2.0"
+current_version = "0.2.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "Bump version {old_version} -> {new_version}"
 commit = true
